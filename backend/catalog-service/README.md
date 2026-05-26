@@ -17,3 +17,10 @@ This service provides book catalog data for the Online Bookstore project.
 ## Notes
 
 This service should be simple, stable, and easy to test.
+
+## Endpoints
+
+- `GET /books` - Return a list of book summaries (no description field).
+- `GET /books/{id}` - Return full book details including description.
+- `POST /checkout` - Mock checkout endpoint that returns a success response.
+- `GET /health` - Health check.

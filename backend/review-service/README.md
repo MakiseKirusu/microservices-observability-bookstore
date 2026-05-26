@@ -20,3 +20,13 @@ This service is important for:
 ## Notes
 
 If versioned deployment is used, document the differences between v1 and v2 clearly.
+
+## Versions
+
+- `v1` - Returns reviews with fields: `review_id`, `book_id`, `reviewer`, `text`, `date`.
+- `v2` - Same endpoint as v1, but each review includes an additional `sentiment` field.
+
+## Endpoints
+
+- `GET /books/{id}/reviews` - Return reviews for a book.
+- `GET /health` - Health check.

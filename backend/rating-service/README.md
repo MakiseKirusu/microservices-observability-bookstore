@@ -19,3 +19,9 @@ This service can be used to:
 ## Notes
 
 This service may include a controllable delay or error endpoint for testing.
+
+## Endpoints
+
+- `GET /books/{id}/rating` - Return rating for a book.
+  - Query params: `delay_ms` (0-10000) to simulate latency, `fail=true` to simulate an error.
+- `GET /health` - Health check.
