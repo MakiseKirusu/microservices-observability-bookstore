@@ -141,3 +141,30 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+# --- Python Backend ---
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env/
+
+# Pytest / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- IDE & OS ---
+# macOS system files
+.DS_Store
+
+# VS Code settings (Optional - keep if you want to share workspace settings)
+.vscode/
+
+# --- Local Configs ---
+# If you ever create local secret files (don't commit these!)
+*.local.yaml
