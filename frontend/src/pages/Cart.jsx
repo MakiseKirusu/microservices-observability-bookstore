@@ -1,10 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowRight, CheckCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
+  const [checkoutStatus, setCheckoutStatus] = useState(null);
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+    setCheckoutStatus('processing');
+
+    try {
+      const response = await fetch('/api/catalog/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          items: cartItems.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            quantity: item.quantity
+          })),
+          total: cartTotal, 
+          payment_method: "credit_card"
+        }), 
+      });
+
+      if (!response.ok) throw new Error("Checkout failed");
+
+      setCheckoutStatus('success');
+      clearCart(); 
+    } catch (err) {
+      console.error(err);
+      setCheckoutStatus('error');
+    }
+  };
+
+  // Render a success screen if the backend accepted the POST request
+  if (checkoutStatus === 'success') {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '4rem', padding: '2rem' }}>
+        <CheckCircle size={64} color="#10b981" style={{ margin: '0 auto 1rem' }} />
+        <h2 style={{ marginBottom: '1rem', fontSize: '2rem', fontWeight: 'bold' }}>Order Successful!</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Your order has been securely processed by the catalog service.</p>
+        <Link to="/" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
+          Continue Shopping
+        </Link>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -92,14 +137,18 @@ const Cart = () => {
             <button 
               className="btn btn-primary" 
               style={{ width: '100%', padding: '1rem', fontSize: '1.125rem', marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}
-              onClick={() => {
-                alert('This is a mockup. In a real app, this would redirect to payment processing.');
-                clearCart();
-              }}
+              onClick={handleCheckout}
+              disabled={checkoutStatus === 'processing'}
             >
-              Proceed to Checkout
-              <ArrowRight size={20} />
+              {checkoutStatus === 'processing' ? 'Processing...' : 'Proceed to Checkout'}
+              {checkoutStatus !== 'processing' && <ArrowRight size={20} />}
             </button>
+            
+            {checkoutStatus === 'error' && (
+              <p style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center', fontSize: '0.875rem' }}>
+                Checkout failed. Make sure the catalog service is running.
+              </p>
+            )}
           </div>
         </div>
       </div>

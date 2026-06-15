@@ -1,0 +1,61 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookstore-gateway
+spec:
+  selector:
+    istio: ingressgateway # Uses the default Istio ingress controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookstore-routing
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookstore-gateway
+  http:
+  # Route 1: Catalog API - Full path passed to backend
+  - match:
+    - uri:
+        prefix: /api/catalog
+    route:
+    - destination:
+        host: catalog_service
+        port:
+          number: 8000
+
+  # Route 2: Rating API
+  - match:
+    - uri:
+        prefix: /api/ratings
+    route:
+    - destination:
+        host: rating-service
+        port:
+          number: 80
+
+  # Route 3: Review API
+  - match:
+    - uri:
+        prefix: /api/reviews
+    route:
+    - destination:
+        host: review-service
+        port:
+          number: 80
+
+  # Route 4: React Frontend (Catch-all)
+  - route:
+    - destination:
+        host: frontend
+        port:
+          number: 80

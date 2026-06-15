@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
-import { mockBooks } from '../data/mockBooks';
 import { useCart } from '../context/CartContext';
 
 const Home = () => {
+  const [books, setBooks] = useState([]);
   const { addToCart } = useCart();
 
+   useEffect(() => {
+    fetch('/api/catalog/books')
+      .then(res => res.json())
+      .then(data => setBooks(data));
+  }, []);
+  
   return (
     <div className="container">
       <div className="page-header">
@@ -15,7 +21,7 @@ const Home = () => {
       </div>
 
       <div className="book-grid">
-        {mockBooks.map(book => (
+        {books.map(book => (
           <div key={book.id} className="book-card">
             <Link to={`/book/${book.id}`} className="book-image-container">
               <img src={book.cover} alt={book.title} className="book-image" loading="lazy" />
