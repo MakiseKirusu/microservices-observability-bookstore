@@ -87,13 +87,16 @@ BOOK_REVIEWS = {
 }
 
 
-@app.get('/books/{book_id}/reviews', response_model=List[Review])
+@app.get('/api/reviews/books/{book_id}/reviews', response_model=List[Review])
 def list_reviews(book_id: str) -> List[dict]:
     if book_id not in BOOK_REVIEWS:
         raise HTTPException(status_code=404, detail='book not found')
     return BOOK_REVIEWS[book_id]
 
-
+@app.get('/')
+def root_ping() -> dict:
+    """Catches the internal ping from the catalog service to keep Kiali green."""
+    return {'status': 'review service is awake and listening'}
 @app.get('/health')
 def health_check() -> dict:
     return {'status': 'ok'}

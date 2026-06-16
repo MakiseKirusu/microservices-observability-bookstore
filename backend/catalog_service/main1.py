@@ -1,8 +1,10 @@
-from typing import List
-from fastapi import FastAPI, HTTPException
+from typing import List, Optional
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.routing import APIRoute
+import urllib.request
+import urllib.error
 
 app = FastAPI(title='Catalog Service', version='1.0.0')
 
@@ -113,11 +115,35 @@ def book_to_summary(book: dict) -> dict:
         'price': book['price'],
         'cover': book['cover'],
     }
-
+def ping_service(service_name: str):
+    """Fires a dummy request to another microservice to trigger Istio telemetry."""
+    # Kubernetes internal DNS allows us to call services by their simple name!
+    # We assume port 80, which is standard for K8s services.
+    url = f"http://{service_name}:80/" 
+    try:
+        # 0.5 second timeout so it doesn't slow down your website
+        urllib.request.urlopen(url, timeout=0.5) 
+    except Exception:
+        # We don't care if it fails (404, 500, etc.)
+        # Istio intercepts the attempt regardless, which is all Kiali needs!
+        pass
 # Registering routes DIRECTLY on 'app' with the full prefix
 @app.get('/api/catalog/books', response_model=List[BookSummary])
-def list_books() -> List[dict]:
-    return [book_to_summary(book) for book in BOOKS]
+
+    
+def list_books(search: Optional[str] = Query(default=None)) -> List[dict]:
+    ping_service("rating-service")
+    ping_service("review-service")
+    
+    results = BOOKS
+    if search:
+        search_lower = search.lower()
+        results = [
+            book for book in BOOKS 
+            if search_lower in book['title'].lower() or search_lower in book['author'].lower()
+        ]
+        
+    return [book_to_summary(book) for book in results]
 
 @app.get('/api/catalog/books/{book_id}', response_model=BookDetail)
 def get_book(book_id: str) -> dict:

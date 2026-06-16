@@ -1,29 +1,20 @@
 
-# Observability
+# Kubernetes Manifests
 
-This folder contains setup files, notes, and dashboards related to observability.
+This folder contains Kubernetes resource files for deploying the Online Bookstore project.
 
-## Scope
+## Expected contents
 
-The project should demonstrate:
-- metrics
-- traces
-- logs
-- service graph visualization
-
-## Tools
-
-Possible tools include:
-- Prometheus
-- Grafana
-- Jaeger
-- Kiali
-- Loki or ELK
+- Deployments
+- Services
+- ConfigMaps
+- Namespaces
+- Other supporting Kubernetes resources
 
 ## Purpose
 
-This folder is used to store observability-related configuration and documentation for the project demo.
+These files define how each service runs inside Kubernetes.
 
 ## Notes
 
-Keep screenshots, dashboard references, and setup steps organized for presentation.
+Keep manifests organized and clearly named by service.

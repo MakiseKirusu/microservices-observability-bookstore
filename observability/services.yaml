@@ -16,11 +16,18 @@ spec:
     metadata:
       labels:
         app: rating
+        annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: rating
-        image: ttl.sh/lumina-backend-vgu:2h
-        command: ["uvicorn", "rating-service.main2:app", "--host", "0.0.0.0", "--port", "8000"]
+        image: ttl.sh/lumina-backend-vgu:v10
+        imagePullPolicy: Always
+        env:
+        - name: PYTHONPATH
+          value: "/app" 
+        command: ["uvicorn", "rating_service.main2:app", "--host", "0.0.0.0", "--port", "8000"]
         ports:
         - containerPort: 8000
 ---
@@ -47,6 +54,9 @@ metadata:
   labels:
     app: review
     version: v1
+  annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
 spec:
   replicas: 1
   selector:
@@ -58,11 +68,18 @@ spec:
       labels:
         app: review
         version: v1
+      annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: review
-        image: ttl.sh/lumina-backend-vgu:2h
-        command: ["uvicorn", "review-service.v1.main3version1:app", "--host", "0.0.0.0", "--port", "8000"]
+        image: ttl.sh/lumina-backend-vgu:v10
+        imagePullPolicy: Always
+        env:
+        - name: PYTHONPATH
+          value: "/app"
+        command: ["uvicorn", "review_service.v1.main3version1:app", "--host", "0.0.0.0", "--port", "8000"]
         ports:
         - containerPort: 8000
 
@@ -88,11 +105,18 @@ spec:
       labels:
         app: review
         version: v2
+      annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: review
-        image: ttl.sh/lumina-backend-vgu:2h
-        command: ["uvicorn", "review-service.v2.main3version2:app", "--host", "0.0.0.0", "--port", "8000"]
+        image: ttl.sh/lumina-backend-vgu:v10
+        imagePullPolicy: Always
+        env:
+        - name: PYTHONPATH
+          value: "/app"
+        command: ["uvicorn", "review_service.v2.main3version2:app", "--host", "0.0.0.0", "--port", "8000"]
         ports:
         - containerPort: 8000
 
@@ -104,7 +128,7 @@ metadata:
   name: review-service
 spec:
   selector:
-    app: review # Notice it does NOT specify a version label here
+    app: review 
   ports:
   - protocol: TCP
     port: 80

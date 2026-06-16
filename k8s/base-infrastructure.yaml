@@ -16,12 +16,14 @@ spec:
     metadata:
       labels:
         app: catalog
+      annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: catalog
-        image: ttl.sh/lumina-backend-vgu:v5 # Change this!
+        image: ttl.sh/lumina-backend-vgu:v10
         imagePullPolicy: Always
-        # This tells Python to treat the /app directory as a source folder
         env:
         - name: PYTHONPATH
           value: "/app" 
@@ -60,10 +62,14 @@ spec:
     metadata:
       labels:
         app: frontend
+      annotations: # ADD THIS BLOCK
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: frontend
-        image: ttl.sh/lumina-frontend-vgu:2h
+        image: ttl.sh/lumina-frontend-vgu:v10
+        imagePullPolicy: Always # <-- Added for absolute safety!
         ports:
         - containerPort: 80
 ---

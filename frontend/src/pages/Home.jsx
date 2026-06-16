@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Home = () => {
   const [books, setBooks] = useState([]);
   const { addToCart } = useCart();
+  const location = useLocation();
 
-   useEffect(() => {
-    fetch('/api/catalog/books')
+  useEffect(() => {
+    // Check the URL for a search term
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get('search');
+    
+    // Dynamically build the fetch URL
+    const endpoint = searchQuery 
+      ? `/api/catalog/books?search=${encodeURIComponent(searchQuery)}` 
+      : '/api/catalog/books';
+
+    fetch(endpoint)
       .then(res => res.json())
-      .then(data => setBooks(data));
-  }, []);
+      .then(data => setBooks(data))
+      .catch(err => console.error(err));
+  }, [location.search]); // Re-run whenever the URL changes
   
   return (
     <div className="container">

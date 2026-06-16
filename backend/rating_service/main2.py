@@ -30,7 +30,7 @@ BOOK_RATINGS = {
 }
 
 
-@app.get('/books/{book_id}/rating', response_model=RatingResponse)
+@app.get('/api/ratings/books/{book_id}/rating', response_model=RatingResponse)
 def get_rating(
     book_id: str,
     delay_ms: Optional[int] = Query(default=None, ge=0, le=10000),
@@ -44,6 +44,10 @@ def get_rating(
         raise HTTPException(status_code=503, detail='rating service failure')
     return {'book_id': book_id, 'rating': BOOK_RATINGS[book_id]}
 
+@app.get('/')
+def root_ping() -> dict:
+    """Catches the internal ping from the catalog service to keep Kiali green."""
+    return {'status': 'rating service is awake and listening'}
 
 @app.get('/health')
 def health_check() -> dict:
