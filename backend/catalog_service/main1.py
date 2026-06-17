@@ -6,9 +6,23 @@ from fastapi.routing import APIRoute
 import urllib.request
 import urllib.error
 
+# IMPORT THE INSTRUMENTATOR
+from prometheus_fastapi_instrumentator import Instrumentator
+
 app = FastAPI(title='Catalog Service', version='1.0.0')
 
-# Safe Debugger: Only prints actual API routes
+# 1. CORS MIDDLEWARE MUST GO FIRST
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
+
+# 2. INSTRUMENTATOR GOES AFTER CORS
+Instrumentator().instrument(app).expose(app)
+
+# 3. YOUR STARTUP EVENT
 @app.on_event("startup")
 async def startup_event():
     print("--- DEBUG: REGISTERED ROUTES ---")
@@ -16,13 +30,6 @@ async def startup_event():
         if isinstance(route, APIRoute):
             print(f"Path: {route.path}, Methods: {route.methods}")
     print("---------------------------------")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['*'],
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
 
 class BookSummary(BaseModel):
     id: str

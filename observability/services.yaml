@@ -16,13 +16,13 @@ spec:
     metadata:
       labels:
         app: rating
-        annotations: # ADD THIS BLOCK
+      annotations: # <-- FIXED INDENTATION
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
       containers:
       - name: rating
-        image: ttl.sh/lumina-backend-vgu:v10
+        image: ttl.sh/lumina-backend-vgu:v12
         imagePullPolicy: Always
         env:
         - name: PYTHONPATH
@@ -35,6 +35,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rating-service
+  annotations: # <-- ADDED TO SERVICE
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
 spec:
   selector:
     app: rating
@@ -54,9 +57,6 @@ metadata:
   labels:
     app: review
     version: v1
-  annotations: # ADD THIS BLOCK
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8000"
 spec:
   replicas: 1
   selector:
@@ -68,13 +68,13 @@ spec:
       labels:
         app: review
         version: v1
-      annotations: # ADD THIS BLOCK
+      annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
       containers:
       - name: review
-        image: ttl.sh/lumina-backend-vgu:v10
+        image: ttl.sh/lumina-backend-vgu:v12
         imagePullPolicy: Always
         env:
         - name: PYTHONPATH
@@ -105,13 +105,13 @@ spec:
       labels:
         app: review
         version: v2
-      annotations: # ADD THIS BLOCK
+      annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
       containers:
       - name: review
-        image: ttl.sh/lumina-backend-vgu:v10
+        image: ttl.sh/lumina-backend-vgu:v12
         imagePullPolicy: Always
         env:
         - name: PYTHONPATH
@@ -126,6 +126,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: review-service
+  annotations: # <-- ADDED TO SERVICE
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
 spec:
   selector:
     app: review 

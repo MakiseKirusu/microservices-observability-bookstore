@@ -5,8 +5,12 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+# IMPORT THE INSTRUMENTATOR
+from prometheus_fastapi_instrumentator import Instrumentator
+
 app = FastAPI(title='Rating Service', version='1.0.0')
 
+# 1. CORS MIDDLEWARE MUST GO FIRST
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -14,8 +18,11 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+# 2. INSTRUMENTATOR GOES AFTER CORS
+Instrumentator().instrument(app).expose(app)
 
 class RatingResponse(BaseModel):
+# ... [Keep the rest of your file exactly the same] ...
     book_id: str
     rating: float
 
